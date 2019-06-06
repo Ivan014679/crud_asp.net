@@ -547,7 +547,7 @@ Now, we must to show the data in this view. I will do by a table as follows:
     </tbody>
 </table>
 
-<button type="button" class="btn" onclick="location.href='CreatePerson'">New person</button>
+<button type="button" class="btn" onclick="location.href='Person/CreatePerson'">New person</button>
 ```
 
 Using Razor and a foreach cycle, I get all the data of the model that is in its "List" attribute by means of the helper "DisplayFor". NOTE: You can change the name of the variable item to your liking. But "Model" is a variable of Razor that contains the model that is assigned with the view. Therefore, you should not change it.

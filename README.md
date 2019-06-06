@@ -482,3 +482,177 @@ In this action:
 * I've called the delete method of my model, for that I've sent it the id.
 * Finally, I redirect the view that shows all the people.
 
+## Step 5. Create the views
+
+We're almost done, we just need to program the user interface which will show all the data. You can create as many views as you need, but remember that each one must be called exactly the same as a corresponding action of the controller.
+
+### View of show data
+
+* On the name of your action of to show data, right click -> Add View.
+* A window will appear asking you for the name and template of the View. You must leave the name that is there by default.
+* Set as template empty.
+
+You should have something like this:
+
+```c#
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+```
+
+First, you must import the model with which, the controller works (@model {Your solution}.Models.{Your model}) at the beginning of the document. In my case, it must be like this:
+
+```c#
+@model People.Models.PersonModel
+@{
+    ViewBag.Title = "List of people";
+}
+
+<h2>Index</h2>
+```
+
+As you can see, I have changed the value of ViewBag.Title, this is the title of the head. You can modify too it if you want.
+
+Now, we must to show the data in this view. I will do by a table as follows:
+
+```c#
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.List)
+        {
+            <tr>
+                <td>@Html.DisplayFor(p => item.Name)</td>
+                <td>@Html.DisplayFor(p => item.Gender)</td>
+                <td>@Html.DisplayFor(p => item.Phone)</td>
+                <td>
+                    @using (Html.BeginForm("UpdatePerson", "Person", FormMethod.Post))
+                    {<button type="submit" name="id" value="@item.Id" class="btn">Update</button>}
+                </td>
+                <td>
+                    @using (Html.BeginForm("DeletePerson", "Person", FormMethod.Post))
+                    {<button type="submit" name="id" value="@item.Id" class="btn">Delete</button>}
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button type="button" class="btn" onclick="location.href='CreatePerson'">New person</button>
+```
+
+Using Razor and a foreach cycle, I get all the data of the model that is in its "List" attribute by means of the helper "DisplayFor". NOTE: You can change the name of the variable item to your liking. But "Model" is a variable of Razor that contains the model that is assigned with the view. Therefore, you should not change it.
+
+In the helper "DisplayFor", you must write, using a lambda expression (example: p => item.Name), to which attribute this helper is related. As it is a helper display, its function will be to show the data contained in an attribute of the model.
+
+After, There are two buttons with their respective forms, you can see that a button corresponds to update, while the other corresponds to delete. Both buttons have as name id (name="id"), it is very important, do you remember the names of the params that are in the actions "UpdatePerson" and "DeletePerson" of the controller? Well, according to the name to which you have placed that parameter, the two buttons MUST called in the same way, otherwise it will not work.
+
+On the other hand, both buttons have as value the id of each person, this value will be send by the form by "post" to the actions of the controller. The syntax of the form helper is as follows:
+
+```c#
+@using (Html.BeginForm({Action}, {Controller}, {Method}))
+```
+
+Finally, at the end of the table, there are one button which its function is redirect to the view "CreatePerson". You must change it according to your view of create a data.
+
+### View of create data
+
+Go back to the controller.
+
+* On the name of your action of to create data, right click -> Add View.
+* A window will appear asking you for the name and template of the View. You must leave the name that is there by default.
+* Set as template empty.
+
+Now, we must to do a form. For this example I did it this way:
+
+```c#
+@using (Html.BeginForm("Index", "Usuario", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.LabelFor(p => p.Name)
+        @Html.TextBoxFor(p => p.Name, new { @class = "form-control", @placeholder = "Enter your name" })
+        @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Gender)
+        @Html.TextBoxFor(p => p.Gender, new { @class = "form-control", @placeholder = "Enter your gender" })
+        @Html.ValidationMessageFor(p => p.Gender, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Phone)
+        @Html.TextBoxFor(p => p.Phone, new { @class = "form-control", @placeholder = "Enter your phone" })
+        @Html.ValidationMessageFor(p => p.Phone, "", new { @class = "form-text text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-sucess">Add new person</button>
+    </div>
+}
+```
+
+As you can see, the form sends data to the action "CreatePerson" of the controller "Person" by "post". Inside the form, there are several helpers and a button "Add new person".
+
+The helper "LaberFor", will be show the name that have the attribute related to the helper depending on the data annotations "Display" in the model.
+
+The helper "TextBoxFor" is a text field that is related with the attribute that you have written in the lambda expression. As you can see, we can add attributes to the helpers as a placeholder, class, etc. It is optional.
+
+If you have added validations in the model, the helper "ValidationMessageFor" will show the errors that the user has committed to be corrected.
+
+### View of modify data
+
+Go back to the controller.
+
+* On the name of your action of to create data, right click -> Add View.
+* A window will appear asking you for the name and template of the View. You must leave the name that is there by default.
+* Set as template empty.
+
+Now, we must to do a form. For this example I did it this way:
+
+
+```c#
+@model People.Models.PersonModel
+@{
+    ViewBag.Title = "Update a person";
+}
+
+<h2>Update a person</h2>
+
+@using (Html.BeginForm("SaveChanges", "Person", FormMethod.Post))
+{
+    @Html.HiddenFor(p => p.Id)
+    <div class="form-group">
+        @Html.LabelFor(p => p.Name)
+        @Html.TextBoxFor(p => p.Name, new { @class = "form-control", @placeholder = "Enter your name" })
+        @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Gender)
+        @Html.TextBoxFor(p => p.Gender, new { @class = "form-control", @placeholder = "Enter your gender" })
+        @Html.ValidationMessageFor(p => p.Gender, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Phone)
+        @Html.TextBoxFor(p => p.Phone, new { @class = "form-control", @placeholder = "Enter your phone" })
+        @Html.ValidationMessageFor(p => p.Phone, "", new { @class = "form-text text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-sucess">Update person</button>
+    </div>
+}
+```
+
+It's very similar to the view "CreatePerson" with a change, I've added a helper "HiddenFor", this will send the id to the action "SaveChanges" and it will avoid that the dao always modify the first record. You must do it according to your controller and model.
+
+### Step 6. Modify the view "Index" of the controller "Home" (Optional)
+
+If you have come this far, congratulations, you have created your first web application in ASP.NET with CRUD.

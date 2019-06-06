@@ -410,6 +410,7 @@ We need two actions with the same name, one will receive parameters by get, and 
         {
             if (ModelState.IsValid)
             {
+                pModel.Create();
                 return RedirectToAction("Index");
             }
             else
@@ -420,7 +421,7 @@ We need two actions with the same name, one will receive parameters by get, and 
 ```
 
 In the first action, I only tell the view to be painted. Later a form will be programmed in the view.
-In the second action, I receive a model by "post" and I validate if the data is correct. If this is the case, I redirect the view to show people, otherwise, I return the model to the same view.
+In the second action, I receive a model by "post", after, I create a new record in the table with the model, and I validate if the data is correct. If this is the case, I redirect the view to show people, otherwise, I return the model to the same view.
 
 You must do the same, according to your model.
 

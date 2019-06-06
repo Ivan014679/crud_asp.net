@@ -548,7 +548,7 @@ Now, we must to show the data in this view. I will do by a table as follows:
     </tbody>
 </table>
 
-<button type="button" class="btn" onclick="location.href='./CreatePerson'">New person</button>
+@Html.ActionLink("New person", "CreatePerson", "Person", new { @class = "btn btn-primary" })
 ```
 
 Using Razor and a foreach cycle, I get all the data of the model that is in its "List" attribute by means of the helper "DisplayFor". NOTE: You can change the name of the variable item to your liking. But "Model" is a variable of Razor that contains the model that is assigned with the view. Therefore, you should not change it.
@@ -563,7 +563,7 @@ On the other hand, both buttons have as value the id of each person, this value 
 @using (Html.BeginForm({Action}, {Controller}, {Method}))
 ```
 
-Finally, at the end of the table, there are one button which its function is redirect to the view "CreatePerson". You must change it according to your view of create a data.
+Finally, at the end of the table, there are one helper "ActionLink" which its function is redirect to the view "CreatePerson". You must change it according to your view of create a data.
 
 ### View of create data
 

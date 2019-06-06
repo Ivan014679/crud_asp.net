@@ -653,7 +653,7 @@ Now, we must to do a form. For this example I did it this way:
 
 It's very similar to the view "CreatePerson" with a change, I've added a helper "HiddenFor", this will send the id to the action "SaveChanges" and it will avoid that the dao always modify the first record. You must do it according to your controller and model.
 
-### Step 6. Modify the view "Index" of the controller "Home" (Optional)
+### Step 6. Modify the shared layout (Optional)
 
 If you have come this far, congratulations, you have created your first web application in ASP.NET with CRUD. What I will explain now will be to show links to your views on the home page that is displayed once you compile the project.
 

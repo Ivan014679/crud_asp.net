@@ -20,7 +20,7 @@ And you already have your project created so you can start working on it.
 * Right click on the folder Databases -> Add new database. This will create our database in the local server of Visual Studio.
 * Write a name to your database and choose a location where it will be saved. I've named my database as "Person" and i've saved it in the location by default (don't worry, later the database will be transferred to our project).
 
-Remember to create the tables with their columns according to your needs.
+Remember to create the tables with their columns according to your needs. I've created a table only, called "Person" with columns: "Id" (PK), "Name", "Gender" and "Phone".
 RECOMMENDABLE: Set the primary key of a table as auto increment.
 
 ### After, create the DataModel using Entity Framework
@@ -50,3 +50,261 @@ After, a new window must appear. It This will help us configure our data model.
 * Finally, click on "Finish".
 
 Done! your data model is ready. You must see a graphic of the entity relationship model of your database.
+
+## Step 3. Create the models
+
+### First, create the model in the folder "Models"
+
+Note that for each entity that you have created, there must be a model associated with each with the same name, followed by the suffix "Model". In my case, i only have one entity called "Person", so, its model must be called "PersonModel".
+
+* On the folder called "Models", right click -> Add -> Class...
+* A window will open. Select "Class" and name it as the entity that you've created, followed by the suffix "Model". In my case, it will be called "PersonModel".
+
+Now, you must have written a similar code in this way:
+
+```c#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace People.Models
+{
+    public class PersonModel
+    {
+    }
+}
+```
+
+Now, you must to write all the attributes corresponding to each field of the entity, besides, a ArrayList of the same model. This attribute will save a list of model elements, in my case, a list of people.
+
+According to my example, my entity is "Person" and its fields are: "Id", "Name", "Gender" and "Phone", so, I wrote these attributes with the same name in my model as follows:
+
+```c#
+        public decimal Id { get; set; }
+
+        [Display(Name = "Full name")]
+        [StringLength(maximumLength: 100, MinimumLength = 1)]
+        public string Name { get; set; }
+
+        [Display(Name = "Gender")]
+        [StringLength(maximumLength: 20, MinimumLength = 1)]
+        public string Gender { get; set; }
+
+        [Display(Name = "Phone")]
+        [StringLength(maximumLength: 10, MinimumLength = 1)]
+        public string Phone { get; set; }
+
+        public List<PersonModel> List { get; set; }
+```
+
+"Id" is decimal because is the primary key and a auto increment field of my entity "Person".
+"Name", "Gender" and "Phone" are string, because these fields save text strings in my entity "Person".
+Remember, the type of each attribute will depend on the type of data that you have assigned to each field of your table.
+
+The methods get and set are to access (read and write), from other classes once initialized and declared a variable of the model type.
+
+Finally, "Display" and "StringLength" are data annotations for to validate the data that is sent in the forms. With "Display", an attribute is named, which will later be displayed in the view by the "Label" helper. While, "StringLength" works to validate the maximum and minimum length of a string that can be sent.
+
+NOTE: The data annotations are OPTIONAL, if you want to use this on your proyect, don't forget to import its class (using System.ComponentModel.DataAnnotations;)
+
+### Then, create the data access to work with the database
+
+Now, in the folder "Models", create a new folder called "DataAccess" which will contain each class of data access for each model created.
+
+* Now, right click on "DataAccess" -> Add -> Class...
+* A window will open. Select "Class" and name it as the model that you've created, followed by the suffix what you want. In my case, it will be called "PersonDao".
+
+You must have written a similar code in this way:
+
+```c#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace People.Models.DataAccess
+{
+    public class PersonDao
+    {
+    }
+}
+```
+
+This class will contain the code which will work with the crud (create, read, update and delete). Therefore, here we are going to program 4 methods, each one corresponding to create, read, modify or eliminate.
+
+Remember to import your model and your data model here. In my case, I did it like this:
+
+```c#
+using People.Models.DataModel;
+```
+
+You must do something like this:
+
+```c#
+using {Your namespace}.Models.DataModel;
+```
+
+#### The create method
+
+In my case, i've created my method as follows:
+
+```c#
+        public void Create(PersonModel p)
+        {
+            using (var context = new PersonEntities())
+            {
+                Person pe = new Person();
+                pe.Name = p.Name;
+                pe.Gender = p.Gender;
+                pe.Phone = p.Phone;
+
+                context.Person.Add(pe);
+                context.SaveChanges();
+            }
+        }
+```
+
+As you can see, the method receives like param my model of Person. You must declare your model there with any variable name (i've named it as "p").
+
+Do you remember when we named to the configuration of the connection of the database? Well, here we need to declare it and instantiate it in a variable of type var. I've named this variable as "context". Besides, this line code must be enclosed by "using" as written above.
+
+Inside, I've Inside, I have declared and instantiated an object of the type of the entity "Person". To that object I assign in each of its attributes, the values that "p" has. You must do the same according to your entity and your model.
+
+After, I've added that new person to the database (context.Person.Add(pe)) and i've saved changes (context.SaveChanges()).
+
+#### The read method
+
+In my case, i've created my method as follows:
+
+```c#
+        public List<PersonModel> Consult()
+        {
+            List<PersonModel> peoplelist = new List<PersonModel>();
+            using (var context = new PersonEntities())
+            {
+                var query = (from d in context.Person select d).ToList();
+                foreach (var item in query)
+                {
+                    PersonModel p = new PersonModel();
+                    p.Id = item.Id;
+                    p.Name = item.Name;
+                    p.Gender = item.Gender;
+                    p.Phone = item.Phone;
+
+                    peoplelist.Add(p);
+                }
+            }
+            return peoplelist;
+        }
+```
+
+I've declared and instantiated an array list of PersonModel, which will have all the people in my "Person" table. You must declare and instantiate an array list of your model there.
+
+After, as in the method "create", I've declared and instantiated the variable context which contains the configuration of the connection of the database. Inside the "using", I've defined a variable called "query", which will do a query to the table "Person" and it will bring me all its records. You have to change the "context.Person" according to the name that you have assigned to that variable and to the entity from which you want to obtain all its tuples ({Context}.{Table}). "d" is only a variable that EntityFramework uses to bring a record of a table, you can call it like you want.
+
+Then, in a foreach cycle, for each record of the "Person" table, it is added to my array list of people. But first, you must declare and instantiate an object of the type of your model and to it, the values of each record are assigned (In my case: PersonModel p = new PersonModel()).
+
+Finally, I return the array list of people. You must return the array list of your model.
+
+#### The update method
+
+In my case, i've created my method as follows:
+
+```c#
+        public void Update(PersonModel p)
+        {
+            using (var context = new PersonEntities())
+            {
+                var query = (from d in context.Person select d).Where(d => d.Id.Equals(p.Id)).FirstOrDefault();
+                query.Name = p.Name;
+                query.Gender = p.Gender;
+                query.Phone = p.Phone;
+                context.SaveChanges();
+            }
+        }
+```
+
+As you can see, this method seems to be a fusion of the create and read methods, but there is a big difference in the "query" variable, in which, directly the values of the model that is brought by the method parameter are assigned, this is because a new person is not being created, but an existing one is being modified, that is why an object of the type of the entity "Person" is not declared and instantiated.
+
+Besides, the query has something extra (Where(d => d.Id.Equals(p.Id)).FirstOrDefault()). With "where", you're saying that searches certain record with a certain condition ((d => d.Id.Equals(p.Id)). In my case, I'm saying to bring all the records that have the same id as my model (because the id is the primary key and cannot be repeated). Therefore, it would only bring me one person, which I want to modify. You must do the same but according to your model and entity.
+
+At the end of the instruction, you must add "FirstOrDefault()", because, even though you are only bringing a record, the variable will return an array. To fix this, with that method you are saying that it only brings you the first record or the one that is by default, instead of an array.
+
+Finally, I've saved changes, as in the create method (context.SaveChanges()).
+
+#### The delete method
+
+In my case, i've created my method as follows:
+
+```c#
+        public void Delete(decimal id)
+        {
+            using (var context = new PersonEntities())
+            {
+                var record = (from d in context.Person select d).Where(d => d.Id.Equals(id)).FirstOrDefault();
+                context.Person.Remove(record);
+                context.SaveChanges();
+            }
+        }
+```
+
+As you can see, this method is similar to the update method, and more simple. The only difference is that it brings as parameter the id instead of the whole object of the model.
+
+After, I delete the person of my entity (context.Person.Remove(record)). Remember, You must do it according to your table and your model.
+
+Finally, I've saved changes in the database.
+
+### Call the CRUD methods in the model
+
+Return to the model and write the four methods according to those that are written in the Dao class. But these will only be responsible for calling them, not to communicate with the database.
+
+Remember to import the Dao class in your model (using {Your namespace}.Models.DataAccess).
+
+#### The create method
+
+```c#
+        public void Create()
+        {
+            PersonDao pdao = new PersonDao();
+            pdao.Create(this);
+        }
+```
+
+#### The read method
+
+```c#
+        public List<PersonModel> Consult()
+        {
+            PersonDao pdao = new PersonDao();
+            return pdao.Consult();
+        }
+```
+
+#### The update method
+
+```c#
+        public void Update()
+        {
+            PersonDao pdao = new PersonDao();
+            pdao.Update(this);
+        }
+```
+
+#### The delete method
+
+```c#
+        public void Delete(decimal id)
+        {
+            PersonDao pdao = new PersonDao();
+            pdao.Delete(id);
+        }
+```
+
+As you can see, this methods are very simple. The create and update method calls to the create and update methods respectively of the Dao class sending the model.
+
+With the read method, you obtain a array list of data and return that array.
+
+And with the delete method, you send the id to the Dao class to be eliminated a record.
+
+

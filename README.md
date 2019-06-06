@@ -655,4 +655,31 @@ It's very similar to the view "CreatePerson" with a change, I've added a helper 
 
 ### Step 6. Modify the view "Index" of the controller "Home" (Optional)
 
-If you have come this far, congratulations, you have created your first web application in ASP.NET with CRUD.
+If you have come this far, congratulations, you have created your first web application in ASP.NET with CRUD. What I will explain now will be to show links to your views on the home page that is displayed once you compile the project.
+
+* Go to Views -> Shared -> Index.cshtml
+* Search the following from line 22:
+
+```c#
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+```
+
+As you can see, here are the links of three views that are created by default when you create your proyect. You can add your views here and delete these links. I've deleted all three and added only a corresponding link to the list of people, like this:
+
+```c#
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("List of people", "Index", "Person")</li>
+                </ul>
+```
+
+The syntax of the helper "ActionLink" is as follows:
+
+```c#
+@Html.ActionLink({Text to show}, {Action}, {Controller})
+```
+
+Well, with this I end this tutorial. See you.

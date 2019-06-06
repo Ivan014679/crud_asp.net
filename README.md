@@ -207,6 +207,32 @@ Then, in a foreach cycle, for each record of the "Person" table, it is added to 
 
 Finally, I return the array list of people. You must return the array list of your model.
 
+#### The obtain a record method
+
+This method is very important to work the update method. In my case, i've created my method as follows:
+
+```c#
+        public PersonModel ConsultOne(decimal id)
+        {
+            using (var context = new PersonEntities())
+            {
+                PersonModel person = new PersonModel();
+                var record = (from d in context.Person select d).Where(d => d.Id.Equals(id)).FirstOrDefault();
+                person.Id = record.Id;
+                person.Name = record.Name;
+                person.Gender = record.Gender;
+                person.Phone = record.Phone;
+                return person;
+            }
+        }
+```
+
+It is similar to "consult" method, only I've declared and initialized a object "person" of the type of my model "PersonModel", which will contain a person according to the id that the method has as param.
+
+However, there is a big difference in the "record" variable, in which, it has something extra (Where(d => d.Id.Equals(id)).FirstOrDefault()). With "where", you're saying that searches certain record with a certain condition ((d => d.Id.Equals(id)). In my case, I'm saying to bring all the records that have the same id as my model (because the id is the primary key and cannot be repeated). Therefore, it would only bring me one person, which I need. You must do the same but according to your model and entity.
+
+At the end of the instruction, you must add "FirstOrDefault()", because, even though you are only bringing a record, the variable will return an array. To fix this, with that method you are saying that it only brings you the first record or the one that is by default, instead of an array.
+
 #### The update method
 
 In my case, i've created my method as follows:
@@ -225,11 +251,9 @@ In my case, i've created my method as follows:
         }
 ```
 
-As you can see, this method seems to be a fusion of the create and read methods, but there is a big difference in the "query" variable, in which, directly the values of the model that is brought by the method parameter are assigned, this is because a new person is not being created, but an existing one is being modified, that is why an object of the type of the entity "Person" is not declared and instantiated.
+As you can see, this method seems to be a fusion of the create and read methods, but there is a big difference in the "query" variable, in which, directly the values of the model that is brought by the method parameter are assigned (not only an id), this is because a new person is not being created, but an existing one is being modified, that is why an object of the type of the entity "Person" is not declared and instantiated.
 
-Besides, the query has something extra (Where(d => d.Id.Equals(p.Id)).FirstOrDefault()). With "where", you're saying that searches certain record with a certain condition ((d => d.Id.Equals(p.Id)). In my case, I'm saying to bring all the records that have the same id as my model (because the id is the primary key and cannot be repeated). Therefore, it would only bring me one person, which I want to modify. You must do the same but according to your model and entity.
-
-At the end of the instruction, you must add "FirstOrDefault()", because, even though you are only bringing a record, the variable will return an array. To fix this, with that method you are saying that it only brings you the first record or the one that is by default, instead of an array.
+As in the method "ConsultOne", I only bring one person, which I want to modify. You must do the same but according to your model and entity.
 
 Finally, I've saved changes, as in the create method (context.SaveChanges()).
 
@@ -281,6 +305,17 @@ Remember to import the Dao class in your model (using {Your namespace}.Models.Da
         }
 ```
 
+#### The consult one method
+
+
+```c#
+        public PersonModel ConsultOne(decimal id)
+        {
+            PersonDao pdao = new PersonDao();
+            return pdao.ConsultOne(id);
+        }
+```
+
 #### The update method
 
 ```c#
@@ -303,8 +338,147 @@ Remember to import the Dao class in your model (using {Your namespace}.Models.Da
 
 As you can see, this methods are very simple. The create and update method calls to the create and update methods respectively of the Dao class sending the model.
 
-With the read method, you obtain a array list of data and return that array.
+With the read method, you obtain an array list of data and return that array while with the method "ConsultOne", you obtain a data according to id that you send it.
 
 And with the delete method, you send the id to the Dao class to be eliminated a record.
 
+## Step 4. Create the controllers
+
+Each model must have its own controller. For to create one, follow the next steps:
+
+* On the folder "Controllers", right click -> Add... -> Controller
+* A window will appear asking you for the type of controller. Choose "MVC 5 Controller - Empty".
+* Name the controller like the entity, followed by the suffix "Controller". In my case, I only have one entity called "Person", so, its controller must be called "PersonController".
+
+You must have something like this:
+
+```c#
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace People.Controllers
+{
+    public class PersonController : Controller
+    {
+        // GET: Person
+        public ActionResult Index()
+        {
+            return View();
+        }
+    }
+}
+```
+
+For now, the controller have only a action (method) called "Index" and only contain a return, which say to the view "Index" to be painted. I will use this action to show the list of people. You can to use it for a form to create or update a data, you can even change the name of this action, but remember, the view must have the same name as the action.
+
+Another important fact, do not forget to import your model to the controller.
+
+### Read and show data
+
+This is my code:
+
+```c#
+        public ActionResult Index()
+        {
+            PersonModel pModel = new PersonModel();
+            pModel.List = pModel.Consult();
+            return View(pModel);
+        }
+```
+
+* For to show my list of people, i've declared and instantiated a object "pModel" of the type of my model "PersonModel".
+* After, to my list attribute I put the list of people calling to the method "Consult" created in the model.
+* Finally, I've sent this model to the view to be painted (return View(pModel)).
+
+You must do the same, according to your model, don't forget it!
+
+### Create data
+
+We need two actions with the same name, one will receive parameters by get, and another by post. This is my code:
+
+```c#
+        public ActionResult CreatePerson()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        public ActionResult CreatePerson(PersonModel pModel)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(pModel);
+            }
+        }
+```
+
+In the first action, I only tell the view to be painted. Later a form will be programmed in the view.
+In the second action, I receive a model by "post" and I validate if the data is correct. If this is the case, I redirect the view to show people, otherwise, I return the model to the same view.
+
+You must do the same, according to your model.
+
+### Update data
+
+We will also need two actions, although with different names, and both will receive parameters through "post". This is my code:
+
+```c#
+        [HttpPost]
+        public ActionResult UpdatePerson(decimal id)
+        {
+            PersonModel pModel = new PersonModel();
+            pModel = pModel.ConsultOne(id);
+            return View(pModel);
+        }
+
+        [HttpPost]
+        public ActionResult SaveChanges(PersonModel pModel)
+        {
+            if (ModelState.IsValid)
+            {
+                pModel.Update();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(pModel);
+            }            
+        }
+```
+
+In the first action:
+* The id is received by "post".
+* I've declared and instantiated a object "pModel" of the type of my model "PersonModel".
+* After, I get a person according to that id and I've saved it in the model.
+* Finally, I've sent this model to the view to be painted (return View(pModel)).
+
+In the second action, I receive a model by "post" and I validate if the data is correct. If this is the case, I update the model, after, I redirect the view to show people, otherwise, I return the model to the same view.
+
+You must do the same, according to your model.
+
+### Eliminate data
+
+Here we only need a action that will receive parameters through "post". This is my code:
+
+```c#
+        [HttpPost]
+        public ActionResult DeletePerson(decimal id)
+        {
+            PersonModel pModel = new PersonModel();
+            pModel.Delete(id);
+            return RedirectToAction("Index");
+        }
+```
+
+In this action:
+
+* I've declared and instantiated a object "pModel" of the type of my model "PersonModel".
+* I've called the delete method of my model, for that I've sent it the id.
+* Finally, I redirect the view that shows all the people.
 

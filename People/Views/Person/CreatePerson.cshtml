@@ -1,0 +1,29 @@
+﻿@model People.Models.PersonModel
+@{
+    ViewBag.Title = "Create a person";
+}
+
+<h2>Create a person</h2>
+
+@using (Html.BeginForm("CreatePerson", "Person", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.LabelFor(p => p.Name)
+        @Html.TextBoxFor(p => p.Name, new { @class = "form-control", @placeholder = "Enter your name" })
+        @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Gender)
+        @Html.TextBoxFor(p => p.Gender, new { @class = "form-control", @placeholder = "Enter your gender" })
+        @Html.ValidationMessageFor(p => p.Gender, "", new { @class = "form-text text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(p => p.Phone)
+        @Html.TextBoxFor(p => p.Phone, new { @class = "form-control", @placeholder = "Enter your phone" })
+        @Html.ValidationMessageFor(p => p.Phone, "", new { @class = "form-text text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-sucess">Add new person</button>
+    </div>
+}

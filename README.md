@@ -6,9 +6,12 @@ First, you need to create a project using the MVC architectural pattern.
 
 * Open Visual Studio. Go to File -> New -> Project. This will open a new window.
 * Search Visual C# -> ASP.NET Web Application (.NET Framework).
+
 ![CapturaCreateProyect](https://user-images.githubusercontent.com/51175024/59141986-3fbfdf80-897c-11e9-8c2e-1fc769698b83.PNG)
+
 * Write a name to your project and choose a location where it will be saved. I've named my project as "People" and i've saved it in a folder of my USB.
 * After, you see a new window where you can choose a template for your project. You must choose MVC and check the MVC box. Then, click on OK.
+
 ![CapturaMVC](https://user-images.githubusercontent.com/51175024/59141994-6bdb6080-897c-11e9-9ade-8b9f434b79f4.PNG)
 
 And you already have your project created so you can start working on it.
@@ -21,6 +24,7 @@ And you already have your project created so you can start working on it.
 * You will see a panel on the left side of the IDE window. Go to SQL Server -> (localdb)/MSSQLLocalDB -> Databases.
 * Right click on the folder Databases -> Add new database. This will create our database in the local server of Visual Studio.
 * Write a name to your database and choose a location where it will be saved. I've named my database as "Person" and i've saved it in the location by default (don't worry, later the database will be transferred to our project).
+
 ![CapturaDB](https://user-images.githubusercontent.com/51175024/59142005-8a415c00-897c-11e9-84fd-a01106cf704d.PNG)
 
 Remember to create the tables with their columns according to your needs. I've created a table only, called "Person" with columns: "Id" (PK), "Name", "Gender" and "Phone".
@@ -37,16 +41,21 @@ By keeping an order, within "Models" we will create a new folder called "DataMod
 You will see a window where you will watch several items you can add to the proyect. This time we will add a data model to work more easily with the database created.
 
 * Go to Visual C# -> Data -> ADO.NET Entity Data Model. Write a name to your data model. I've named it as "PeopleDataModel".
+
 ![CapturaDataModel](https://user-images.githubusercontent.com/51175024/59142010-a80ec100-897c-11e9-82df-db1362082bf5.PNG)
 
 After, a new window must appear. It This will help us configure our data model.
 
 * First, it will ask us what the model will contain, leave the default option (EF Designer from Database). Then, click on next.
 * Now, it will ask us the data connection that our application use to connect to the database. Click on "New Connection".
+
 ![CapturaEntities](https://user-images.githubusercontent.com/51175024/59142030-13589300-897d-11e9-8feb-0042e30db2a8.PNG)
+
 * Select "Microsoft SQL Server Database File". Click on "Continue".
 * After, it will ask us the database file name. Click on "Browse..."
+
 ![CapturaADO](https://user-images.githubusercontent.com/51175024/59142016-c7a5e980-897c-11e9-8999-7d0d34c61c30.PNG)
+
 * Search where you saved the database. By default, it is in "C:\Users\{Your username}\AppData\Local\Microsoft\Microsoft SQL Server Local DB\Instances\MSSQLLocalDB". Click on "Ok".
 * After, the database file will be charged. Then, puts a name to the configuration of the connection to the database. I've left the name that the IDE put me by default (PersonEntities). Click on "Next".
 * Then, It will ask you if you want to copy the database file to your project and modify the connection. You must click on "Yes".
@@ -65,6 +74,7 @@ Note that for each entity that you have created, there must be a model associate
 
 * On the folder called "Models", right click -> Add -> Class...
 * A window will open. Select "Class" and name it as the entity that you've created, followed by the suffix "Model". In my case, it will be called "PersonModel".
+
 ![CapturaModel](https://user-images.githubusercontent.com/51175024/59142036-36834280-897d-11e9-9446-ec9ca365cd1d.PNG)
 
 Now, you must have written a similar code in this way:
@@ -356,6 +366,7 @@ Each model must have its own controller. For to create one, follow the next step
 * On the folder "Controllers", right click -> Add... -> Controller
 * A window will appear asking you for the type of controller. Choose "MVC 5 Controller - Empty".
 * Name the controller like the entity, followed by the suffix "Controller". In my case, I only have one entity called "Person", so, its controller must be called "PersonController".
+
 ![CapturaController](https://user-images.githubusercontent.com/51175024/59142038-4569f500-897d-11e9-9e89-f8c6dcd62f9b.PNG)
 
 You must have something like this:
@@ -500,6 +511,7 @@ We're almost done, we just need to program the user interface which will show al
 * On the name of your action of to show data, right click -> Add View.
 * A window will appear asking you for the name and template of the View. You must leave the name that is there by default.
 * Set as template empty.
+
 ![CapturaView](https://user-images.githubusercontent.com/51175024/59142044-5d417900-897d-11e9-96be-e0878249b58a.PNG)
 
 You should have something like this:
